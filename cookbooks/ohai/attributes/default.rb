@@ -1,8 +1,8 @@
 #
-# Cookbook:: apt
-# Resource:: preference
+# Cookbook Name:: ohai
+# Attribute:: default
 #
-# Copyright:: 2010-2016, Chef Software, Inc.
+# Copyright 2010, Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@
 # limitations under the License.
 #
 
-actions :add, :remove
-default_action :add
+# FHS location would be /var/lib/chef/ohai_plugins or similar.
+case node["platform_family"]
+when "windows"
+	default["ohai"]["plugin_path"] = "C:/chef/ohai_plugins"
+	default["ohai"]["hints_path"] = "C:/chef/ohai/hints"
+else
+	default["ohai"]["plugin_path"] = "/etc/chef/ohai_plugins"
+	default["ohai"]["hints_path"] = "/etc/chef/ohai/hints"
+end
 
-state_attrs :glob,
-            :package_name,
-            :pin,
-            :pin_priority
-
-attribute :package_name, kind_of: String, name_attribute: true, regex: [/^([a-z]|[A-Z]|[0-9]|_|-|\.|\*|\+)+$/]
-attribute :glob, kind_of: String
-attribute :pin, kind_of: String
-attribute :pin_priority, kind_of: String, required: true
+# The list of plugins and their respective file locations
+default["ohai"]["plugins"]["ohai"] = "plugins"
